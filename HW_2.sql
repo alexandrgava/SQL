@@ -129,6 +129,7 @@ where r.role_name like '%Junior%' and s.monthly_salary is not null;
 
 
  --13. Вывести имена и зарплаты Middle специалистов
+-- только работающие
 select e.employee_name ,s.monthly_salary 
 from roles r 
 join roles_employee re 
@@ -138,6 +139,19 @@ on re.employee_id =e.id
 join employee_salary es 
 on es.employee_id =e.id 
 join salary s 
+on s.id =es.salary_id 
+where r.role_name like '%Middle%';
+
+-- все
+select e.employee_name ,s.monthly_salary 
+from roles r 
+full join roles_employee re 
+on r.id =re.role_id 
+full join employees e 
+on re.employee_id =e.id 
+full join employee_salary es 
+on es.employee_id =e.id 
+full join salary s 
 on s.id =es.salary_id 
 where r.role_name like '%Middle%';
 
