@@ -21,8 +21,8 @@ join  employees
 on employees.id =employee_salary.employee_id
 where salary.monthly_salary <2000;
  --3. Вывести все зарплатные позиции, но работник по ним не назначен. (ЗП есть, но не понятно кто её получает.)
---select employee_salary.employee_id 
---вывул зарплатную позицию
+
+--вывeл зарплатную позицию
 select employee_salary.employee_id 
 from employee_salary
 full join employees 
@@ -44,23 +44,22 @@ on employee_salary.employee_id =employees.id
 join salary s 
 on s.id = employee_salary.salary_id 
 where employees.id is null and s.monthly_salary <2000;
+
  --5. Найти всех работников кому не начислена ЗП.
-select e.employee_name 
-from roles_employee re 
-full join employees e 
-on e.id =re.employee_id 
+
+select * 
+from employees e 
 full join employee_salary es 
-on es.employee_id =re.employee_id
-full join salary s 
-on s.id =es.salary_id 
-where s.id is null;
+on es.employee_id =e.id 
+where es.salary_id is null;
+
 
  --6. Вывести всех работников с названиями их должности.
 select e.employee_name ,r.role_name 
 from employees e 
-join roles_employee re 
+ join roles_employee re 
 on e.id =re.employee_id 
-join roles r 
+ join roles r 
 on r.id=re.role_id ;
  --7. Вывести имена и должность только Java разработчиков.
 select e.employee_name ,r.role_name 
@@ -100,24 +99,34 @@ where r.role_name like '%Manual QA%';
  --11. Вывести имена и должность автоматизаторов QA
 select e.employee_name ,r.role_name 
 from employees e 
-join roles_employee re 
+ join roles_employee re 
 on e.id =re.employee_id 
 join roles r 
 on r.id=re.role_id 
 where r.role_name  like '%Automation%QA%';
+
  --12. Вывести имена и зарплаты Junior специалистов
---select e.employee_name ,s.monthly_salary 
+--выведем всех Junior с их ЗП
 select e.employee_name ,s.monthly_salary 
 from roles r 
-join roles_employee re 
+full join roles_employee re 
 on r.id =re.role_id 
-join employees e 
+full join employees e 
 on re.employee_id =e.id 
-join employee_salary es 
+full join employee_salary es 
 on es.employee_id =e.id 
-join salary s 
+full join salary s 
 on s.id =es.salary_id 
-where r.role_name like '%Junior%' 
+where r.role_name like '%Junior%' ;
+-- выведем только работающих
+select e.employee_name ,s.monthly_salary from employees e
+full join roles_employee re 
+on e.id = re.employee_id 
+full join roles r on r.id =re.role_id 
+full join employee_salary es  on es.employee_id =re.employee_id 
+full join salary s on s.id =es.salary_id 
+where r.role_name like '%Junior%' and s.monthly_salary is not null;
+
 
  --13. Вывести имена и зарплаты Middle специалистов
 select e.employee_name ,s.monthly_salary 
@@ -131,6 +140,7 @@ on es.employee_id =e.id
 join salary s 
 on s.id =es.salary_id 
 where r.role_name like '%Middle%';
+
  --14. Вывести имена и зарплаты Senior специалистов
 --select e.employee_name ,s.monthly_salary
 select *
@@ -255,6 +265,7 @@ join salary s
 on s.id =es.salary_id 
 where r.role_name like '%QA%';
  --25. Вывести количество QA инженеров
+--выведем количество работающих
 select count(r.role_name)
 from roles_employee re 
 join roles r 
@@ -264,7 +275,12 @@ on es.employee_id =re.employee_id
 join salary s 
 on s.id =es.salary_id 
 where r.role_name like '%QA%';
- --26. Вывести количество Middle специалистов.
+--и выведем количество всех QA
+select count(r.role_name) from roles_employee re
+join roles r  on r.id =re.role_id 
+where r.role_name like '%QA%'
+ ;--26. Вывести количество Middle специалистов.
+--количество работающих
 select COUNT(r.role_name)
 from roles_employee re 
 join roles r 
@@ -274,7 +290,12 @@ on es.employee_id =re.employee_id
 join salary s 
 on s.id =es.salary_id 
 where r.role_name like '%Middle%';
+--количество всех
+select count(r.role_name) from roles_employee re
+join roles r  on r.id =re.role_id 
+where r.role_name like '%Middle%';
  --27. Вывести количество разработчиков
+--количество работающих
 select COUNT(r.role_name)
 from roles_employee re 
 join roles r 
@@ -283,6 +304,10 @@ join employee_salary es
 on es.employee_id =re.employee_id 
 join salary s 
 on s.id =es.salary_id 
+where r.role_name like '%developer%';
+-- количество всех разработчиков
+select count(r.role_name) from roles_employee re
+join roles r  on r.id =re.role_id 
 where r.role_name like '%developer%';
  --28. Вывести фонд (сумму) зарплаты разработчиков.
 select SUM(s.monthly_salary)
@@ -347,5 +372,7 @@ join employees e
 on e.id =re.employee_id 
 where s.monthly_salary in (1100,1500,2000)
 order by s.monthly_salary;
+
+
 
 
