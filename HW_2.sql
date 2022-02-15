@@ -1,4 +1,4 @@
-select *from roles r ;
+ select *from roles r ;
 select* from salary s ;
 select *from employees e ;
 select *from employee_salary es ;
